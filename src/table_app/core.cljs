@@ -1,6 +1,6 @@
 (ns table-app.core
     (:require
-      [table-app.function-handler :as fh]
+      [table-app.function-handler :as f]
       [reagent.core :as r]))
 
 ;; -------------------------
