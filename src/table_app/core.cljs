@@ -18,6 +18,10 @@
 ;; -------------------------
 ;; Table data and helper functions
 
+(defn add-new-column [table]
+  (let [add-col-fn (fn [map] (assoc map :function-output (rand-int 100)))]
+   nil))
+
 ;; generate some dummy data
 (def table-data (r/atom [{:Name    "Lizard"
                           :Colour  "Dark Green"
@@ -106,6 +110,24 @@
    [:h2 "Welcome to Reagent"]
    [lister (range 10)]])
 
+;;----------------
+
+(def function-text (r/atom "foo"))
+
+(defn function-input [value]
+  [:input {:type "text"
+           :value @value
+           :on-change #(reset! value (-> % .-target .-value))}])
+
+(defn function-submit []
+  [:input {:type "button" :value "compute!"
+           :on-click #(add-new-column table-data)}])
+
+(defn function-area []
+  [:div
+   [:p "Enter a function here: " [function-input function-text]]
+   [function-submit]])
+
 ;; -------------------------
 ;; Table component
 
@@ -130,7 +152,7 @@
 ;; Initialize app
 
 (defn mount-root []
-  (r/render [table] (.getElementById js/document "app")))
+  (r/render [:div [table] [function-area]] (.getElementById js/document "app")))
 
 (defn init! []
   (mount-root))
