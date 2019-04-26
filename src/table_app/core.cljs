@@ -28,52 +28,52 @@
        (map add-new-col-fn table)))
 
 ;; some dummy data
-(def table-data (r/atom [{:Name    "Lizard"
-                          :Colour  "Dark Green"
-                          :Skin    "Leathery"
-                          :Weight  100
-                          :Age     10
-                          :Hostile false}
-                         {:Name    "Lion"
-                          :Colour  "Gold"
-                          :Skin    "Furry"
-                          :Weight  190000
-                          :Age     4
-                          :Hostile true}
-                         {:Name    "Giraffe"
-                          :Colour  "Green"
-                          :Skin    "Hairy"
-                          :Weight  1200000
-                          :Age     8
-                          :Hostile false}]))
+(def table-data (r/atom [{:name    "Lizard"
+                          :colour  "Dark Green"
+                          :skin    "Leathery"
+                          :weight  100
+                          :age     10
+                          :hostile false}
+                         {:name    "Lion"
+                          :colour  "Gold"
+                          :skin    "Furry"
+                          :weight  190000
+                          :age     4
+                          :hostile true}
+                         {:name    "Giraffe"
+                          :colour  "Green"
+                          :skin    "Hairy"
+                          :weight  1200000
+                          :age     8
+                          :hostile false}]))
 
 ;the column model
-(def columns [{:path [:Name]
-               :header "Name"
-               :key :Name}  ; convention - use field name for reagent key
-              {:path [:Colour]
-               :header "Colour"
-               :key :Colour}
-              {:path [:Skin]
-               :header "Skin Type"
-               :key :Skin}
-              {:path [:Weight]
-               :header "Weight"
+(def columns [{:path [:name]
+               :header ":name"
+               :key :name}  ; convention - use field name for reagent key
+              {:path [:colour]
+               :header ":colour"
+               :key :colour}
+              {:path [:skin]
+               :header ":skin"
+               :key :skin}
+              {:path [:weight]
+               :header ":weight"
                :format #(format-number %)
                :attrs (fn [data] {:style {:text-align "right"
                                           :display "block"}})
-               :key :Weight}
-              {:path [:Age]
-               :header "Age"
+               :key :weight}
+              {:path [:age]
+               :header ":age"
                :attrs (fn [data] {:style {:text-align "right"
                                           :display "block"}})
-               :key :Age}
-              {:path [:Hostile]
-               :header "Hostile?"
+               :key :age}
+              {:path [:hostile]
+               :header ":hostile"
                :format #(if % "true" "false")
-               :key :Hostile}
+               :key :hostile}
               {:path [:function-output]
-               :header "function-output"
+               :header ":function-output"
                :key :function-output}])
 
 (defn- row-key-fn
