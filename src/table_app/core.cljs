@@ -106,19 +106,8 @@
     content]))
 
 ;; -------------------------
-;; Views
+;; Function area component
 
-(defn lister [items]
-  [:ul
-   (for [item items]
-     ^{:key item} [:li "Item " item])])
-
-(defn home-page []
-  [:div
-   [:h2 "Welcome to Reagent"]
-   [lister (range 10)]])
-
-;;----------------
 
 (def function-text (r/atom "foo"))
 
