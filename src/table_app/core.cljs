@@ -117,6 +117,7 @@
 (defn function-input [value]
   [:input {:type "text"
            :value @value
+           :size 50
            :on-change #(reset! value (-> % .-target .-value))}])
 
 (defn function-submit []
@@ -125,7 +126,8 @@
 
 (defn function-area []
   [:div
-   [:p "Enter a function here: " [function-input function-text]]
+   [:div "Enter a function here: " [function-input function-text]]
+   [:br]
    [function-submit]])
 
 ;; -------------------------
@@ -142,7 +144,6 @@
                                   :table-container {:style {:border "none"}}
                                   :th {:style {:border "1px solid white" :background-color "black"}}
                                   :table-state  table-state
-                                  :scroll-height "80vh"
                                   :column-model columns
                                   :row-key      row-key-fn
                                   :render-cell  cell-fn
