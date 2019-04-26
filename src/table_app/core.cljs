@@ -18,11 +18,16 @@
 ;; -------------------------
 ;; Table data and helper functions
 
-(defn add-new-column [table]
-  (let [add-col-fn (fn [map] (assoc map :function-output (rand-int 100)))]
-   nil))
+(defn temp-row-wise-fn [row]
+  (rand-int 100))
 
-;; generate some dummy data
+(defn make-new-column [table row-wise-fn]
+  (let [add-new-col-fn (fn [row]
+                        (let [new-column-val (row-wise-fn row)]
+                             (assoc row :function-output new-column-val)))]
+       (map add-new-col-fn table)))
+
+;; some dummy data
 (def table-data (r/atom [{:Name    "Lizard"
                           :Colour  "Dark Green"
                           :Skin    "Leathery"
@@ -66,7 +71,10 @@
               {:path [:Hostile]
                :header "Hostile?"
                :format #(if % "true" "false")
-               :key :Hostile}])
+               :key :Hostile}
+              {:path [:function-output]
+               :header "function-output"
+               :key :function-output}])
 
 (defn- row-key-fn
   "Return the reagent row key for the given row"
@@ -120,15 +128,16 @@
            :size 50
            :on-change #(reset! value (-> % .-target .-value))}])
 
-(defn function-submit []
-  [:input {:type "button" :value "compute!"
-           :on-click #(add-new-column table-data)}])
+(defn function-submit [table-data]
+  (let [swap-fn #(make-new-column % temp-row-wise-fn)]
+   [:input {:type "button" :value "compute!"
+            :on-click #(swap! table-data swap-fn)}]))
 
 (defn function-area []
   [:div
    [:div "Enter a function here: " [function-input function-text]]
    [:br]
-   [function-submit]])
+   [function-submit table-data]])
 
 ;; -------------------------
 ;; Table component
