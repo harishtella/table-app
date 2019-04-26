@@ -144,8 +144,8 @@
                                   :table-state  table-state
                                   :column-model columns
                                   :row-key      row-key-fn
-                                  :render-cell  cell-fn
-                                  :caption [:caption "My amazing data set"]}]])
+                                  :render-cell  cell-fn}]])
+                                  
 
 ;; -------------------------
 ;; Initialize app
