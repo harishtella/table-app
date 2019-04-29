@@ -1,6 +1,6 @@
 (ns ^:figwheel-always table-app.core
     (:require
-      [table-app.function-handler :as f]
+      [table-app.function-handler :as fh]
       [reagent.core :as r]
       [reagent-table.core :as rt]
       [goog.events :as events]
@@ -18,13 +18,11 @@
 ;; -------------------------
 ;; Table data and helper functions
 
-(defn temp-row-wise-fn [row]
-  (rand-int 100))
-
-(defn make-new-column [table row-wise-fn]
-  (let [add-new-col-fn (fn [row]
-                        (let [new-column-val (row-wise-fn row)]
-                             (assoc row :function-output new-column-val)))]
+(defn make-new-column [table function-string]
+  (let [row-wise-fn (partial fh/evaluate-expr function-string)
+        add-new-col-fn (fn [row]
+                           (let [new-column-val (row-wise-fn row)]
+                                (assoc row :function-output new-column-val)))]
        (map add-new-col-fn table)))
 
 ;; some dummy data
@@ -108,8 +106,7 @@
 ;; -------------------------
 ;; Function area component
 
-
-(def function-text (r/atom "foo"))
+(def function-text (r/atom ""))
 
 (defn function-input [value]
   [:input {:type "text"
@@ -118,9 +115,8 @@
            :on-change #(reset! value (-> % .-target .-value))}])
 
 (defn function-submit [table-data]
-  (let [swap-fn #(make-new-column % temp-row-wise-fn)]
-   [:input {:type "button" :value "compute!"
-            :on-click #(swap! table-data swap-fn)}]))
+  [:input {:type "button" :value "compute!"
+           :on-click #(swap! table-data make-new-column @function-text)}])
 
 (defn function-area []
   [:div
@@ -145,7 +141,6 @@
                                   :column-model columns
                                   :row-key      row-key-fn
                                   :render-cell  cell-fn}]])
-                                  
 
 ;; -------------------------
 ;; Initialize app
