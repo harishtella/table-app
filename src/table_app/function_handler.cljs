@@ -130,6 +130,57 @@
      (list (transform-token op) (transform-tree-to-clj left-branch) (transform-tree-to-clj right-branch)))
    (transform-token ast)))
 
+
+;---------------------------------------------------
+; RPN interperter
+
+(defn evaluate-token [token context]
+  (let [[tag value] token
+        op-map {"+" + "-" - "*" * "/" /}]
+     (cond
+       (is-number? token) (js/parseFloat value)
+       (operator? token) (op-map value)
+       (variable? token) (context (keyword value))
+       (function? token) (context (keyword value))
+       :else nil)))
+
+(defn interpret-rpn [rpn-token-seq context]
+  (loop [[s1 s2 & rest-of-stack :as stack] '()
+         [current-token & tokens-remaining] rpn-token-seq]
+   (let [evaled-token (evaluate-token current-token context)]
+    (if-not (nil? current-token)
+     (if (operator? current-token)
+      (let [new-value (evaled-token s2 s1)]
+       (recur (cons new-value rest-of-stack) tokens-remaining))
+      (recur (cons evaled-token stack) tokens-remaining))
+     s1))))
+
+(comment
+  ;; TODO: Why won't this compile. It complains about the first recur statement
+ (defn interpret-rpn [rpn-token-seq context]
+   (loop [[s1 s2 & rest-of-stack :as stack] '()
+          [current-token & tokens-remaining] rpn-token-seq]
+         (if-not (nil? current-token)
+           (let [evaled-token (evaluate-token current-token {})]
+            (if (operator? current-token)
+             (let [new-value (evaled-token s2 s1)]
+              (recur (cons new-value rest-of-stack) tokens-remaining))
+             (recur (cons evaled-token stack) tokens-remaining))
+            s1)))))
+
+
+(comment
+ (defn make-tree [rpn-token-seq]
+   (loop [[s1 s2 & rest-of-stack :as stack] '()
+          [current-token & tokens-remaining] rpn-token-seq]
+         (if-not (nil? current-token)
+          (if (operator? current-token)
+           (let [new-expr (list current-token s2 s1)]
+            (recur (cons new-expr rest-of-stack) tokens-remaining))
+           (recur (cons current-token stack) tokens-remaining))
+          s1))))
+
+
 ;---------------------------------------------------
 ; Checking to see if the above code works as expected
 
@@ -141,6 +192,12 @@
 
 (def test-transform (transform-tree-to-clj test-tree))
 
+(def test-interpret (interpret-rpn rpn {:foo 8}))
+
+;---------------------------
+
+
+
 ;---------------------------
 ; Trying to get eval to work
 
@@ -150,3 +207,5 @@
 ;  (eval `(fn [a-map] ~@body)))
 
 ;(c/eval (c/empty-state) `(+ 3 2) (fn [x] x))
+
+;; TODO: ask why do I have trouble getting vars to show up in figwheel repl. Have to do a 'lein clean'.
