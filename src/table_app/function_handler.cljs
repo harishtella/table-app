@@ -96,41 +96,6 @@
       [tokens-remaining stack output-buffer]))))
 
 ;----------------------------
-
-(defn make-tree [rpn-token-seq]
-  (loop [[s1 s2 & rest-of-stack :as stack] '()
-         [current-token & tokens-remaining] rpn-token-seq]
-        (if-not (nil? current-token)
-         (if (operator? current-token)
-          (let [new-expr (list current-token s2 s1)]
-           (recur (cons new-expr rest-of-stack) tokens-remaining))
-          (recur (cons current-token stack) tokens-remaining))
-         s1)))
-
-(defn variable-to-clj [[tag value :as token]]
-  `(a-map ~value))
-
-(defn number-to-clj [[tag value :as token]]
-  (js/parseFloat value))
-
-(defn operator-to-clj [[tag value :as token]]
-  (let [op-map {"+" '+ "-" '- "*" '* "/" '/}]
-   (op-map value)))
-
-(defn transform-token [token]
-  (cond
-    (variable? token) (variable-to-clj token)
-    (is-number? token) (number-to-clj token)
-    (operator? token) (operator-to-clj token)))
-
-(defn transform-tree-to-clj [ast]
-  (if (list? ast)
-   (let [[op left-branch right-branch] ast]
-     (list (transform-token op) (transform-tree-to-clj left-branch) (transform-tree-to-clj right-branch)))
-   (transform-token ast)))
-
-
-;---------------------------------------------------
 ; RPN interperter
 
 (defn evaluate-token [token context]
