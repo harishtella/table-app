@@ -1,6 +1,7 @@
 (ns table-app.function-handler
   (:require [clojure.string :as str]))
 
+;; TODO: ask why do I have trouble getting vars to show up in figwheel repl. Have to do a 'lein clean'.
 
 (def operator-strings (set ["+" "-" "*" "/"]))
 
@@ -134,6 +135,8 @@
 
 
 (comment
+  ;; TODO: What is strange is that this expression compiles fine. And its not that
+  ;; different from the above.
  (defn make-tree [rpn-token-seq]
    (loop [[s1 s2 & rest-of-stack :as stack] '()
           [current-token & tokens-remaining] rpn-token-seq]
@@ -157,7 +160,3 @@
 (def test-transform (transform-tree-to-clj test-tree))
 
 (def test-interpret (interpret-rpn rpn {:foo 8}))
-
-;---------------------------
-
-;; TODO: ask why do I have trouble getting vars to show up in figwheel repl. Have to do a 'lein clean'.
