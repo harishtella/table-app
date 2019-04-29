@@ -148,15 +148,19 @@
           s1))))
 
 
+(defn evaluate-expr [expression-string context]
+  (let [tokens (tokenize expression-string (keys context))
+        rpn-seq (reverse (last (shunting-yard tokens)))
+        final-value (interpret-rpn rpn-seq context)]
+   final-value))
+
 ;---------------------------------------------------
 ; Checking to see if the above code works as expected
 
 (def tok (tokenize "( 3 + 4 ) * 5 * foo" [:foo :bar]))
-
 (def rpn (reverse (last (shunting-yard tok))))
-
-(def test-tree (make-tree rpn))
-
-(def test-transform (transform-tree-to-clj test-tree))
-
 (def test-interpret (interpret-rpn rpn {:foo 8}))
+
+(def expr "( 3 + 4 ) * 5 * foo")
+(def context {:foo 8})
+(def test-run (evaluate-expr expr context))
