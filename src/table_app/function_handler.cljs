@@ -1,6 +1,5 @@
 (ns table-app.function-handler
-  (:require [clojure.string :as str]
-   [cljs.js :as c]))
+  (:require [clojure.string :as str]))
 
 
 (def operator-strings (set ["+" "-" "*" "/"]))
@@ -195,17 +194,5 @@
 (def test-interpret (interpret-rpn rpn {:foo 8}))
 
 ;---------------------------
-
-
-
-;---------------------------
-; Trying to get eval to work
-
-; (in-ns 'table-app.function-handler)
-
-;(defn gen-fn [body]
-;  (eval `(fn [a-map] ~@body)))
-
-;(c/eval (c/empty-state) `(+ 3 2) (fn [x] x))
 
 ;; TODO: ask why do I have trouble getting vars to show up in figwheel repl. Have to do a 'lein clean'.
