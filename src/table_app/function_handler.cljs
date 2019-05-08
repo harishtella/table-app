@@ -73,6 +73,8 @@
          [last-in-stack & rest-of-stack :as stack] '()
          output-buffer '()]
     (if-not (nil? current-token)
+
+     ;; current-token != nil
      (cond
        (is-number? current-token) (recur tokens-remaining stack (cons current-token output-buffer))
        (variable? current-token) (recur tokens-remaining stack (cons current-token output-buffer))
@@ -87,15 +89,21 @@
 
        (right-paren? current-token)
        (if (left-paren? last-in-stack)
-         ;; This takes everything on the stack and dumps it all onto the output buffer.
+         ;; This takes everything on the stack except the left-paren,
+         ;; and dumps it all onto the output buffer.
         (recur tokens-remaining '() (apply (partial conj output-buffer) rest-of-stack))
         ;; This pops one thing off  the stack and adds it to the output buffer.
         ;; Leaves the right-paren on the list of remaining tokens, however.
         (recur cur-and-rem-tokens rest-of-stack (cons last-in-stack output-buffer)))
+
        (error? current-token)
        nil)
+
+     ;; current-token != nil
      (if-not (nil? last-in-stack)
+      ;; start emptying the stack onto output-buffer recursively
       (recur tokens-remaining rest-of-stack (cons last-in-stack output-buffer))
+      ;; return everything to the caller upon return
       [tokens-remaining stack output-buffer]))))
 
 ;----------------------------
@@ -114,41 +122,17 @@
 (defn interpret-rpn [rpn-token-seq context]
   (loop [[s1 s2 & rest-of-stack :as stack] '()
          [current-token & tokens-remaining] rpn-token-seq]
-   (let [evaled-token (evaluate-token current-token context)]
-    (if-not (nil? current-token)
+   (if-not (nil? current-token)
+
+  ;; current-token != nil
+    (let [evaled-token (evaluate-token current-token context)]
      (if (operator? current-token)
       (let [new-value (evaled-token s2 s1)]
        (recur (cons new-value rest-of-stack) tokens-remaining))
-      (recur (cons evaled-token stack) tokens-remaining))
-     s1))))
+      (recur (cons evaled-token stack) tokens-remaining)))
 
-(comment
-  ;; TODO: Why won't this compile. It complains about the first recur statement
- (defn interpret-rpn [rpn-token-seq context]
-   (loop [[s1 s2 & rest-of-stack :as stack] '()
-          [current-token & tokens-remaining] rpn-token-seq]
-         (if-not (nil? current-token)
-           (let [evaled-token (evaluate-token current-token {})]
-            (if (operator? current-token)
-             (let [new-value (evaled-token s2 s1)]
-              (recur (cons new-value rest-of-stack) tokens-remaining))
-             (recur (cons evaled-token stack) tokens-remaining))
-            s1)))))
-
-
-(comment
-  ;; TODO: What is strange is that this expression compiles fine. And its not that
-  ;; different from the above.
- (defn make-tree [rpn-token-seq]
-   (loop [[s1 s2 & rest-of-stack :as stack] '()
-          [current-token & tokens-remaining] rpn-token-seq]
-         (if-not (nil? current-token)
-          (if (operator? current-token)
-           (let [new-expr (list current-token s2 s1)]
-            (recur (cons new-expr rest-of-stack) tokens-remaining))
-           (recur (cons current-token stack) tokens-remaining))
-          s1))))
-
+  ;; current-token == nil
+    s1)))
 
 (defn evaluate-expr [expression-string context]
   (let [tokens (tokenize expression-string (keys context))
@@ -166,3 +150,8 @@
 (def expr "( 3 + 4 ) * 5 * foo")
 (def context {:foo 8})
 (def test-run (evaluate-expr expr context))
+
+; Scratch space for things to use at the repl
+
+(comment
+ (in-ns 'table-app.function-handler))
