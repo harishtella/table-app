@@ -64,9 +64,9 @@
 
 (defn should-buffer-last-stacked? [last-stacked-token token-to-compare]
   (and (not (left-paren? last-stacked-token))
-   (or (function? last-stacked-token)
-    (and (operator? last-stacked-token)
-       (precedence-dominates? last-stacked-token token-to-compare)))))
+       (or (function? last-stacked-token)
+           (and (operator? last-stacked-token)
+                (precedence-dominates? last-stacked-token token-to-compare)))))
 
 (defn shunting-yard [token-seq]
   (loop [[current-token & tokens-remaining :as cur-and-rem-tokens] token-seq
