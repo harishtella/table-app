@@ -47,31 +47,31 @@
 
 ;the column model
 (def columns [{:path [:name]
-               :header ":name"
+               :header "name"
                :key :name}  ; convention - use field name for reagent key
               {:path [:colour]
-               :header ":colour"
+               :header "colour"
                :key :colour}
               {:path [:skin]
-               :header ":skin"
+               :header "skin"
                :key :skin}
               {:path [:weight]
-               :header ":weight"
+               :header "weight"
                :format #(format-number %)
                :attrs (fn [data] {:style {:text-align "right"
                                           :display "block"}})
                :key :weight}
               {:path [:age]
-               :header ":age"
+               :header "age"
                :attrs (fn [data] {:style {:text-align "right"
                                           :display "block"}})
                :key :age}
               {:path [:hostile]
-               :header ":hostile"
+               :header "hostile"
                :format #(if % "true" "false")
                :key :hostile}
               {:path [:function-output]
-               :header ":function-output"
+               :header "function-output"
                :key :function-output}])
 
 (defn- row-key-fn
