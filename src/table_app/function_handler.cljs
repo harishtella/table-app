@@ -89,10 +89,10 @@
 
        (right-paren? current-token)
        (if (left-paren? last-in-stack)
-         ;; This takes everything on the stack except the left-paren,
-         ;; and dumps it all onto the output buffer.
-        (recur tokens-remaining '() (apply (partial conj output-buffer) rest-of-stack))
-        ;; This pops one thing off  the stack and adds it to the output buffer.
+         ;; This pops the left-paren of the stack and disregards
+         ;; the current token, right paren
+        (recur tokens-remaining rest-of-stack output-buffer)
+        ;; This pops one thing off the stack and adds it to the output buffer.
         ;; Leaves the right-paren on the list of remaining tokens, however.
         (recur cur-and-rem-tokens rest-of-stack (cons last-in-stack output-buffer)))
 
@@ -154,4 +154,7 @@
 ; Scratch space for things to use at the repl
 
 (comment
- (in-ns 'table-app.function-handler))
+  (in-ns 'table-app.function-handler)
+  (def expr "( ( 5 * ( 5 + 2 ) ) + 2 ) / 2")
+  (def context {})
+  (def test-run (evaluate-expr expr context)))
