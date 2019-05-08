@@ -1,7 +1,8 @@
 (ns table-app.function-handler
   (:require [clojure.string :as str]))
 
-;; TODO: ask why do I have trouble getting vars to show up in figwheel repl. Have to do a 'lein clean'.
+;; TODO: Why do I have trouble getting vars to show up in figwheel repl.
+;; Sometimes have to do a 'lein clean'.
 
 (def operator-strings (set ["+" "-" "*" "/"]))
 
@@ -9,14 +10,15 @@
   ([infix-string]
    (tokenize infix-string []))
   ([infix-string variable-symbols]
-   (let [variable-symbol-strings (set (map name variable-symbols))
+   (let [variable-names (set (map name variable-symbols))
          atoms (str/split infix-string #" ")
          tag-fn (fn [atom]
                  (cond
                    (operator-strings atom) ['operator atom]
-                   (variable-symbol-strings atom) ['variable atom]
+                   (variable-names atom) ['variable atom]
                    (= "(" atom) ['l-paren nil]
                    (= ")" atom) ['r-paren nil]
+
                    ;; TODO likely buggy, fix later
                    (not (js/isNaN (js/parseFloat atom))) ['number atom]
                    :else ['error atom]))]
