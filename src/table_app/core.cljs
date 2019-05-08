@@ -82,9 +82,8 @@
 (defn- cell-data
   "Resolve the data within a row for a specific column"
   [row cell]
-  (let [{:keys [path expr]} cell]
-    (and path
-      (get-in row path))))
+  (if-let [{:keys [path]} cell]
+    (get-in row path)))
 
 (defn- cell-fn
  "Return the cell hiccup form for rendering.
@@ -127,7 +126,6 @@
 ;; -------------------------
 ;; Table component
 
-;; draggable has been set to false, but not sure if it always working
 (def table-state (atom {:draggable false}))
 
 (defn table []
